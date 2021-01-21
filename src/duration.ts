@@ -7,7 +7,7 @@ class Duration {
   private hiddenStartTime: number = this.startTime;
   private duration: number = 0;
   private hiddenDuration: number = 0;
-  private currURL: string = window.location.origin + window.location.pathname;
+  private currURL: string = window.location.href.split('?')[0];
 
   constructor(config: IDurationProps) {
     this.onPageShow();
@@ -78,7 +78,7 @@ class Duration {
     console.log(`停留在：%c${this.currURL}`, 'font-size: 18px;', `，页面时长：${t}`);
     store.remove('monitor-duration-hidden');
     this.hiddenDuration = 0;
-    this.currURL = window.location.origin + window.location.pathname;
+    this.currURL = window.location.href.split('?')[0];
   }
 }
 
