@@ -17,7 +17,7 @@ const tsPlugin = ts({
 const babelPlugin = babel({ babelHelpers: 'bundled', include: ['./src'] });
 
 export default {
-  input: './src/monitor.ts',
+  input: './src/index.ts',
   output: {
     file: './lib/index.js',
     format: 'umd',
