@@ -1,3 +1,6 @@
-import { THistoryEvent } from './types';
+import { THistoryEvent, IData } from './types';
 declare const rewriteHistory: (eventName: THistoryEvent) => () => any;
-export { rewriteHistory };
+declare const convertData: (data: IData) => {
+    url: string;
+}[];
+export { rewriteHistory, convertData };

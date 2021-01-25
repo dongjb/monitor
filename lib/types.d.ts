@@ -5,3 +5,6 @@ export interface IDurationProps {
     interval?: number;
     readonly reportURL: string;
 }
+export interface IData {
+    [propName: string]: object;
+}
