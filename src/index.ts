@@ -2,7 +2,7 @@ import store from 'store';
 import storeUpdate from 'store/plugins/update';
 import { v4 as uuidv4 } from 'uuid';
 import { IDurationProps } from './types';
-import { rewriteHistory } from './utils';
+import { rewriteHistory, convertData } from './utils';
 
 store.addPlugin(storeUpdate);
 
@@ -15,7 +15,7 @@ class Monitor {
   private defaultConfig: IDurationProps = {
     mode: 'single',
     interval: 5000,
-    reportURL: ''
+    reportURL: '',
   };
 
   constructor(config: IDurationProps) {
@@ -57,17 +57,15 @@ class Monitor {
       } else {
         data = {
           [this.currURL]: {
-            duration: this.duration - this.getLocalHiddenDuration()
-          }
+            duration: this.duration - this.getLocalHiddenDuration(),
+          },
         };
       }
 
-      let headers = {
-        type: 'application/x-www-form-urlencoded'
-      };
-      let blob = new Blob([JSON.stringify({ data })], headers);
+      const fd = new FormData();
+      fd.append('data', JSON.stringify(convertData(data)));
 
-      navigator.sendBeacon(this.defaultConfig.reportURL, blob);
+      navigator.sendBeacon(this.defaultConfig.reportURL, fd);
       store.remove(`monitor-data-${window.name}`);
     });
   }
@@ -77,7 +75,10 @@ class Monitor {
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
         this.hiddenDuration = new Date().getTime() - this.hiddenStartTime;
-        store.set(`monitor-duration-hidden-${window.name}`, this.hiddenDuration + this.getLocalHiddenDuration() * 1);
+        store.set(
+          `monitor-duration-hidden-${window.name}`,
+          this.hiddenDuration + this.getLocalHiddenDuration() * 1,
+        );
       } else {
         this.hiddenStartTime = new Date().getTime();
       }
@@ -118,7 +119,10 @@ class Monitor {
   private setDurationAndURL(type: string) {
     let t = new Date().getTime() - this.startTime - this.getLocalHiddenDuration();
     this.startTime = new Date().getTime();
-    console.log(`触发事件：%c${type}`, 'background: #606060; color: white; padding: 1px 10px; border-radius: 3px;');
+    console.log(
+      `触发事件：%c${type}`,
+      'background: #606060; color: white; padding: 1px 10px; border-radius: 3px;',
+    );
     console.log(`停留在：%c${this.currURL}`, 'font-size: 18px;', `，页面时长：${t}`);
     this.storeData(t);
     // 路由切换时清空隐藏时长

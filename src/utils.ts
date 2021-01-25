@@ -1,4 +1,4 @@
-import { THistoryEvent } from './types';
+import { THistoryEvent, IData } from './types';
 
 const rewriteHistory = function (eventName: THistoryEvent) {
   const originHistoryEvent = window.history[eventName];
@@ -11,4 +11,12 @@ const rewriteHistory = function (eventName: THistoryEvent) {
   };
 };
 
-export { rewriteHistory };
+const convertData = function (data: IData) {
+  let r = [];
+  for (let key in data) {
+    r.push({ url: key, ...data[key] });
+  }
+  return r;
+};
+
+export { rewriteHistory, convertData };
